@@ -15,14 +15,18 @@ namespace CardService.Services.Repository
         {
             _cards = new List<Card>()
             {
-                new Card(){ UserId = new Guid("3bad8330-d287-4319-bb3f-1f9be9331814"),
+                new Card(){
+                    Id = Guid.NewGuid(),
+                    UserId = new Guid("3bad8330-d287-4319-bb3f-1f9be9331814"),
                     CVC = "123",
                     Pan = "4397 1857 9697 9658",
                     IsDefault = true,
                     CardName = "First card",
                     Expire = new Expire(11, 2030)
                 },
-                 new Card(){ UserId = new Guid("3bad8330-d287-4319-bb3f-1f9be9331814"),
+                 new Card(){
+                    Id = Guid.NewGuid(),
+                    UserId = new Guid("3bad8330-d287-4319-bb3f-1f9be9331814"),
                     CVC = "666",
                     Pan = "2367 0000 0001 9658",
                     IsDefault = false,
@@ -33,7 +37,8 @@ namespace CardService.Services.Repository
         }
         public  void  AddCard(Card card)
         {
-            _cards.Add(new Card { UserId = card.UserId, 
+            _cards.Add(new Card { Id =  Guid.NewGuid(),
+                UserId = card.UserId, 
                 CardName = card.CardName, 
                 CVC = card.CVC,
                 Expire = card.Expire, 

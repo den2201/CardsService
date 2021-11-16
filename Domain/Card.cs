@@ -5,6 +5,7 @@ namespace CardService.Domain
 {
     public class Card
     {
+        public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public string CVC { get; set; }
         public string Pan { get; set; }
