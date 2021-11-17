@@ -20,6 +20,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using CardService.Domain;
 using CardService.Services.Logging;
+using CardService.AppConfiguration;
 
 namespace CardService
 {
@@ -34,6 +35,8 @@ namespace CardService
 
         public void ConfigureServices(IServiceCollection services)
         {
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
             services.AddSingleton<ICardRepository, MemoryRepository>();
         }
 
