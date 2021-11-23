@@ -1,6 +1,5 @@
 ﻿using CardService.Domain;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,7 +8,7 @@ namespace CardService.Services.Repository
 {
     public class MemoryRepository : ICardRepository
     {
-        private  List<Card> _cards;
+        private IList<Card> _cards;
 
         public MemoryRepository()
         {
@@ -49,7 +48,7 @@ namespace CardService.Services.Repository
 
         public IEnumerable<Card> GetCardsByUserId(Guid userId)
         {
-            return _cards.Where(x => x.UserId == userId).ToList();
+            return _cards.Where(x => x.UserId == userId);
         }
     }
 }

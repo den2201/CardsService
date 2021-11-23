@@ -23,6 +23,5 @@ namespace CardService.Domain
         }
         public int Month;
         public int Year;
-       
     }
 }

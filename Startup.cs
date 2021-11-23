@@ -38,6 +38,7 @@ namespace CardService
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
             services.AddSingleton<ICardRepository, MemoryRepository>();
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository)
@@ -54,6 +55,11 @@ namespace CardService
            
             app.Map("/addcard", AddCard);
             app.Map("/getcard", GetCard);
+            app.UseRouting();
+            app.UseEndpoints(endpoint =>
+            {
+                endpoint.MapControllers();
+            });
                
 
             ///Terminating middleware
