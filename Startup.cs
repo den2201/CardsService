@@ -41,7 +41,12 @@ namespace CardService
             services.Configure<AppSettings>(appSettingsSection);
                     
             services.AddSingleton<ICardRepository, MemoryRepository>();
-            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "CardsServise", Version = "v0.1" }));
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CardsApiServise", Version = "v1.0" });
+                var filePath = Path.Combine(System.AppContext.BaseDirectory, $"{nameof(CardService)}.xml");
+                c.IncludeXmlComments(filePath);
+            });
             services.AddScoped<CardDataValidatorFilter>();
             services.AddControllers(options =>
             { 

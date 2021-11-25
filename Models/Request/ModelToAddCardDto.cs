@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CardService.Models.Request
 {
+    /// <summary>
+    /// DTO Card model without some Properties
+    /// </summary>
     public class ModelToAddCardDto
     {
         public Guid UserId { get; set; }

@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CardService.Domain
 {
+    /// <summary>
+    /// Domain card Model with full options
+    /// </summary>
     public class Card
     {
         public Guid Id { get; set; }

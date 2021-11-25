@@ -3,13 +3,13 @@ using CardService.Filters;
 using CardService.Models;
 using CardService.Models.Request;
 using CardService.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CardService.Controller
 {
@@ -24,8 +24,21 @@ namespace CardService.Controller
             _repository = repository;
         }
 
+        /// <summary>
+        /// Gets list of cards by user id
+        /// </summary>
+        /// <param name="userid"></param>
+        /// <returns>user cards list</returns>
+        /// <remarks>
+        /// test user id is 3bad8330-d287-4319-bb3f-1f9be9331814
+        /// Response: two cards
+        /// </remarks>
+        /// <response code="200">Returns existing cards</response>
+        /// <resposne code="404">no cards</resposne>
+
         [HttpGet("getbyuserid")]
-        [ProducesResponseType(typeof(Card), 200)]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status404NotFound)]
         public ActionResult GetCardByUserId([FromQuery] Guid userid)
         {
             var cards = _repository.GetCardsByUserId(userid);
@@ -41,8 +54,21 @@ namespace CardService.Controller
         }
 
 
+        /// <summary>
+        /// adds new card
+        /// </summary>
+        /// <param name="card"></param>
+        /// <returns>Response model with flag of OK or Bad request result</returns>
+        /// <response code="200">card is added</response>
+        /// <resposne code="400">request error</resposne>
+        /// <resposne code="404">card is not added error</resposne>
+
         [HttpPost("addcard")]
         [ServiceFilter(typeof(CardDataValidatorFilter))]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status404NotFound)]
+
         public ActionResult AddCard([FromBody] ModelToAddCardDto card)
         {
             if (!ModelState.IsValid)
@@ -88,7 +114,22 @@ namespace CardService.Controller
             }
         }
 
+        /// <summary>
+        /// Updates card name. Params: DTO model of card with card id and new card name
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns>200OK: if card name is updated</returns>
+        /// <remarks>
+        /// test card id is c937c286-2522-4dfb-99bd-94d9f7f7e04b
+        /// Response: only 200OK status if card name was updated or error code status
+        /// </remarks>
+        /// <response code="200">card name is updated</response>
+        /// <resposne code="404">card is not updated</resposne>
+
         [HttpPost("updatename")]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status404NotFound)]
         public ActionResult UpdateCardName([FromBody] CardUpdateNameData data)
         {
            
@@ -103,8 +144,18 @@ namespace CardService.Controller
                     ErrorMessage = new ErrorMessage { Code = Code.UpdateCardNameError, Message = "Updating Error" },
                 });
         }
-
+        /// <summary>
+        /// deletes card by card id (Guid)
+        /// </summary>
+        /// <param name="card"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// test card id is c937c286-2522-4dfb-99bd-94d9f7f7e04b
+        /// Response: only 200OK status if card was deleted or error code status
+        /// </remarks>
         [HttpPost("delete")]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status400BadRequest)]
         public ActionResult DeleteCard([FromBody] Guid card)
         {
             if (_repository.DeleteCard(card))
@@ -114,15 +165,6 @@ namespace CardService.Controller
             {
                 IsOkStatus = false,
                 ErrorMessage = new ErrorMessage { Code = Code.CardDeleteError, Message = "Card delete Error" }
-            });
-        }
-
-        private IActionResult RequestDataIncorrectReturnError()
-        {
-            return BadRequest(new ApiResponseModel
-            {
-                IsOkStatus = false,
-                ErrorMessage = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = "Incorrect input data" },
             });
         }
     }
