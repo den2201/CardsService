@@ -10,29 +10,28 @@ namespace CardService.Services.Validators
         const int panLength = 16;
         const int numberNine = 9;
         private static int[] cardPanNumbers = new int[panLength];
-        public static bool IsCardExpireDateValidateTrue(Card card)
+        
+        public static bool IsCardExpireDateValidateTrue(int cardMonth, int cardYear)
         {
-            if (card != null)
-            {
-                if (((card.Expire.Month < 1) || (card.Expire.Month > 12)) ||
-                 ((card.Expire.Year < 2000) || (card.Expire.Year < DateTime.Now.Year)))
-                    return false;
-                return true;
-            }
-            return false;
-        }
-
-        public static bool IsCardPanValidateTrue(Card card)
-        {
-            if ((card == null) || (string.IsNullOrEmpty(card.Pan)) || (card.Pan.Length != 16))
+            if ((cardMonth < 1) || (cardMonth > 12) ||
+                                (cardYear < DateTime.Now.Year))
                 return false;
-            if (card.Pan.Where(x => char.IsWhiteSpace(x) || char.IsLetter(x)).Any())
+            return true;
+        }
+           
+           
+
+        public static bool IsCardPanValidateTrue(string cardPanNumber)
+        {
+            if ((string.IsNullOrEmpty(cardPanNumber) || (cardPanNumber.Length != 16)))
+                return false;
+            if (cardPanNumber.Where(x => char.IsWhiteSpace(x) || char.IsLetter(x)).Any())
                 return false;
             
             for( int i = 0; i < panLength; i++)
             {
-                if (char.IsDigit(card.Pan[i]))
-                    cardPanNumbers[i] = card.Pan[i] - '0';
+                if (char.IsDigit(cardPanNumber[i]))
+                    cardPanNumbers[i] = cardPanNumber[i] - '0';
                 else
                     return false;
             }

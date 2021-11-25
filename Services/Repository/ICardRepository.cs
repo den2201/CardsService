@@ -9,6 +9,8 @@ namespace CardService.Services
     {
         void AddCard(Card card);
 
-       IEnumerable<Card> GetCardsByUserId(Guid userId);
+       List<Card> GetCardsByUserId(Guid userId);
+       Card UpdateCardName(Guid cardId, string cardName);
+       bool DeleteCard(Guid cardId);
     }
 }

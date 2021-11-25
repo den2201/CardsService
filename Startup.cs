@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using CardService.Domain;
 using CardService.Services.Logging;
 using CardService.AppConfiguration;
+using CardService.Filters;
 
 namespace CardService
 {
@@ -36,9 +37,16 @@ namespace CardService
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.AddMvc();
             services.Configure<AppSettings>(appSettingsSection);
+                    
             services.AddSingleton<ICardRepository, MemoryRepository>();
-            services.AddControllers();
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "CardsServise", Version = "v0.1" }));
+            services.AddScoped<CardDataValidatorFilter>();
+            services.AddControllers(options =>
+            { 
+                options.Filters.Add<LoggingFilter>(); 
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository)
@@ -48,11 +56,16 @@ namespace CardService
                 app.UseDeveloperExceptionPage();
             }
 
-            ///
-            /// logging middleware
-            ///
+            app.UseCors("AnyOrigin");
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+            });
             app.UseMiddleware<RequestLogService>();
            
+
             app.Map("/addcard", AddCard);
             app.Map("/getcard", GetCard);
             app.UseRouting();
@@ -60,8 +73,7 @@ namespace CardService
             {
                 endpoint.MapControllers();
             });
-               
-
+           
             ///Terminating middleware
             app.Run(async (context) =>
             {
@@ -94,7 +106,7 @@ namespace CardService
                         await context.Response.WriteAsync(ex.Message);
                     }
                     context.Response.StatusCode = 200;
-                    await context.Response.WriteAsync("Card Added");
+                    await context.Response.WriteAsync("Card is Added");
                 });
             }
             ///
