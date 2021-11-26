@@ -22,6 +22,7 @@ using CardService.Domain;
 using CardService.Services.Logging;
 using CardService.AppConfiguration;
 using CardService.Filters;
+using CardService.BackgroundTasks;
 
 namespace CardService
 {
@@ -47,11 +48,12 @@ namespace CardService
                 var filePath = Path.Combine(System.AppContext.BaseDirectory, $"{nameof(CardService)}.xml");
                 c.IncludeXmlComments(filePath);
             });
-            services.AddScoped<CardDataValidatorFilter>();
+            services.AddSingleton<CardDataValidatorFilter>();
             services.AddControllers(options =>
             { 
                 options.Filters.Add<LoggingFilter>(); 
             });
+           services.AddHostedService<DbCardsValidationService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository)

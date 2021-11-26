@@ -12,5 +12,6 @@ namespace CardService.Services
        List<Card> GetCardsByUserId(Guid userId);
        Card UpdateCardName(Guid cardId, string cardName);
        bool DeleteCard(Guid cardId);
+       IEnumerable<Card> GetAllCards();
     }
 }

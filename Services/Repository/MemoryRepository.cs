@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Threading.Tasks;
 
 namespace CardService.Services.Repository
 {
@@ -31,7 +31,7 @@ namespace CardService.Services.Repository
                     Pan = "2367000000019234",
                     IsDefault = false,
                     CardName = "Second card",
-                    Year = 2025,
+                    Year = 1990,
                     Month = 12
                 },
             };
@@ -59,6 +59,12 @@ namespace CardService.Services.Repository
             }
             return false;
         }
+
+        public IEnumerable<Card> GetAllCards()
+        {
+            return _cards;
+        }
+
         public List<Card> GetCardsByUserId(Guid userId)
         {
             return _cards.Where(x => x.UserId == userId).ToList();
