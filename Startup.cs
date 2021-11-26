@@ -23,6 +23,7 @@ using CardService.Services.Logging;
 using CardService.AppConfiguration;
 using CardService.Filters;
 using CardService.BackgroundTasks;
+using CardService.Models;
 
 namespace CardService
 {
@@ -49,6 +50,7 @@ namespace CardService
                 c.IncludeXmlComments(filePath);
             });
             services.AddSingleton<CardDataValidatorFilter>();
+            services.AddTransient<ApiResponseModel>();
             services.AddControllers(options =>
             { 
                 options.Filters.Add<LoggingFilter>(); 
@@ -76,6 +78,7 @@ namespace CardService
             app.Map("/addcard", AddCard);
             app.Map("/getcard", GetCard);
             app.UseRouting();
+            
             app.UseEndpoints(endpoint =>
             {
                 endpoint.MapControllers();

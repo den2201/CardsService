@@ -1,9 +1,10 @@
-﻿using CardService.Models.Request;
+﻿using CardService.Models;
+using CardService.Models.Request;
 using CardService.Services.Validators;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Newtonsoft.Json;
 using System;
-using System.Threading.Tasks;
 
 namespace CardService.Filters
 {
@@ -12,9 +13,18 @@ namespace CardService.Filters
     /// </summary>
     public class CardDataValidatorFilter : Attribute, IActionFilter
     {
+        ApiResponseModel _model;
+        ErrorMessage _errorMessage;
+        
+        public CardDataValidatorFilter(ApiResponseModel model)
+        {
+            _model = model;
+            _model.IsOkStatus = false;
+        }
+
         public void OnActionExecuted(ActionExecutedContext context)
         {
-           
+          
         }
 
         public void OnActionExecuting(ActionExecutingContext context)
@@ -23,11 +33,18 @@ namespace CardService.Filters
 
             if (!CardParamsValidator.IsCardExpireDateValidateTrue(addCardRequestModel.Month,
                                                                  addCardRequestModel.Year))
-                context.ModelState.AddModelError("date", "date expire error validation");
+            {
+                _model.ErrorMessage.Message = "date expire error validation";
+                var errorMessage = JsonConvert.SerializeObject(_model);
+                context.HttpContext.Response.WriteAsync(errorMessage);
+            }
 
             if (!CardParamsValidator.IsCardPanValidateTrue(addCardRequestModel.Pan))
-                context.ModelState.AddModelError("pan", "PAN error validation");
+            { 
+                _model.ErrorMessage.Message = "PAN error validation";
+                var errorMessage = JsonConvert.SerializeObject(_model);
+                context.HttpContext.Response.WriteAsync(errorMessage);
+            }
         }
-
     }
 }
