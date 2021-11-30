@@ -64,7 +64,7 @@ namespace CardService.Controller
         /// <resposne code="400">request error</resposne>
         /// <resposne code="404">card is not added error</resposne>
 
-        [HttpPost("addcard")]
+        [HttpPost("add")]
         [ProducesResponseType(typeof(ApiResponseModel<ModelToAddCardDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
@@ -153,27 +153,18 @@ namespace CardService.Controller
         /// test card id is c937c286-2522-4dfb-99bd-94d9f7f7e04b
         /// Response: only 200OK status if card was deleted or error code status
         /// </remarks>
-        [HttpPost("delete")]
+        [HttpPost("delete/{cardid}")]
         [ProducesResponseType(typeof(ApiResponseModel<DBNull>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteCard([FromBody] Guid card)
+        public ActionResult DeleteCard([FromRoute] Guid cardid)
         {
-            if (_repository.DeleteCard(card))
+            if (_repository.DeleteCard(cardid))
                 return Ok(new ApiResponseModel<DBNull> { IsOkStatus = true });
 
             return BadRequest(new ApiResponseModel<ErrorMessage>
             {
                 IsOkStatus = false,
                 Data = new ErrorMessage { Code = Code.CardDeleteError, Message = "Card delete Error" }
-            });
-        }
-
-        private ActionResult SendError(ErrorMessage message)
-        {
-            return   BadRequest(new ApiResponseModel<ErrorMessage>
-            {
-                IsOkStatus = false,
-                Data  = message
             });
         }
     }

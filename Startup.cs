@@ -25,7 +25,6 @@ using CardService.Filters;
 using CardService.BackgroundTasks;
 using CardService.Models;
 
-
 namespace CardService
 {
     public class Startup

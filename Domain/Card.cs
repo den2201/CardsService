@@ -11,15 +11,8 @@ namespace CardService.Domain
     {
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
-        
-        [Required]
-        [MaxLength(3,ErrorMessage = "Invalid CVC Length")]
         public string CVC { get; set; }
-
-       
         public string Pan { get; set; }
-        
-    
         public CardDateExpired Date { get; set; }
         public bool IsDefault { get; set; }
         public string CardName { get; set; }
