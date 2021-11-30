@@ -31,6 +31,5 @@ namespace CardService.Services.Logging
                     context.Response?.StatusCode);
             }
         }
-
     }
 }

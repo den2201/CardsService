@@ -25,6 +25,7 @@ using CardService.Filters;
 using CardService.BackgroundTasks;
 using CardService.Models;
 
+
 namespace CardService
 {
     public class Startup
@@ -49,8 +50,7 @@ namespace CardService
                 var filePath = Path.Combine(System.AppContext.BaseDirectory, $"{nameof(CardService)}.xml");
                 c.IncludeXmlComments(filePath);
             });
-            services.AddSingleton<CardDataValidatorFilter>();
-            services.AddTransient<ApiResponseModel>();
+            services.AddTransient<ApiResponseModel<Card>>();
             services.AddControllers(options =>
             { 
                 options.Filters.Add<LoggingFilter>(); 

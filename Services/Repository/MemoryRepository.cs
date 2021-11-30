@@ -21,8 +21,7 @@ namespace CardService.Services.Repository
                     Pan = "4397185796979658",
                     IsDefault = true,
                     CardName = "First card",
-                    Year = 2030,
-                    Month = 11
+                   Date = new CardDateExpired { Year = 2030, Month = 11},
                 },
                  new Card(){
                     Id = new Guid("506c2beb-92e2-47a4-acc5-e40a6c07df12"),
@@ -31,8 +30,7 @@ namespace CardService.Services.Repository
                     Pan = "2367000000019234",
                     IsDefault = false,
                     CardName = "Second card",
-                    Year = 1990,
-                    Month = 12
+                   Date = new CardDateExpired { Year = 1990, Month = 12},
                 },
             };
         }
@@ -42,8 +40,7 @@ namespace CardService.Services.Repository
                 UserId = card.UserId, 
                 CardName = card.CardName, 
                 CVC = card.CVC,
-                Month = card.Month, 
-                Year = card.Year,
+                Date = card.Date,
                 IsDefault = card.IsDefault, 
                 Pan = card.Pan 
             });

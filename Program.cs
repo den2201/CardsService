@@ -22,11 +22,6 @@ namespace CardService
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    var config = new ConfigurationBuilder()
-                   .AddJsonFile("appsettings.json", optional: false)
-                   .Build();
-                    AppSettings app = new AppSettings();
-                    config.GetSection("AppSettings").Bind(app);
                     webBuilder.UseStartup<Startup>();
                     webBuilder.ConfigureKestrel(kestrel =>
                     {
@@ -34,7 +29,6 @@ namespace CardService
                         kestrel.Limits.MaxRequestHeaderCount = 7;
                         kestrel.Limits.KeepAliveTimeout = TimeSpan.FromSeconds(5);
                     });
-                    webBuilder.UseUrls(app.AppUrlHttp, app.AppUrlHttps);
                 });
     }
 }

@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace CardService.Controller
 {
@@ -36,19 +37,19 @@ namespace CardService.Controller
         /// <response code="200">Returns existing cards</response>
         /// <resposne code="404">no cards</resposne>
 
-        [HttpGet("getbyuserid")]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status404NotFound)]
-        public ActionResult GetCardByUserId([FromQuery] Guid userid)
+        [HttpGet("user/{userid}")]
+        [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
+        public ActionResult GetCardByUserId([FromRoute] Guid userid)
         {
             var cards = _repository.GetCardsByUserId(userid);
             if((cards == null) || (cards.Count == 0))
             {
-                return NotFound(new ApiResponseModel { IsOkStatus = false, 
-                                    ErrorMessage = new ErrorMessage{ Code = Code.CardNotFound, 
-                                                                                Message ="Not found" } });
+                return NotFound(new ApiResponseModel<ErrorMessage> { IsOkStatus = false, Data = 
+                    new ErrorMessage{ Code = Code.CardNotFound, 
+                                          Message ="Not found" } });
             }
-            var response = new ApiResponseModel { Data = cards, IsOkStatus = true };
+            var response = new ApiResponseModel<IEnumerable<Card>> { Data = cards, IsOkStatus = true };
             var jsonString = JsonConvert.SerializeObject(response);
             return Ok(jsonString);
         }
@@ -64,30 +65,29 @@ namespace CardService.Controller
         /// <resposne code="404">card is not added error</resposne>
 
         [HttpPost("addcard")]
-        [ServiceFilter(typeof(CardDataValidatorFilter))]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status404NotFound)]
-
+        [ProducesResponseType(typeof(ApiResponseModel<ModelToAddCardDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
+        
         public ActionResult AddCard([FromBody] ModelToAddCardDto card)
         {
             if (!ModelState.IsValid)
             {
-                List<string> err = new ();
+                StringBuilder errors = new StringBuilder();
                 IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
                 foreach (var error in allErrors)
                 {
-                    err.Append(error.ErrorMessage);
+                    errors.Append(error.ErrorMessage);
+                    errors.AppendLine();
                 }
-                return BadRequest(new ApiResponseModel { IsOkStatus = false, ErrorMessage = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = err.ToString() } });
+                return BadRequest(new ApiResponseModel<ErrorMessage> { IsOkStatus = false, Data = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = errors.ToString() } });
             }
 
             if (card == null)
-                return BadRequest(new ApiResponseModel
+                return BadRequest(new ApiResponseModel<ErrorMessage>
                 {
                     IsOkStatus = false,
-                    ErrorMessage = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = "Incorrect input data" },
-                    Data = card
+                    Data = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = "Incorrect input data" },
                 });
 
             try
@@ -98,19 +98,19 @@ namespace CardService.Controller
                     UserId = card.UserId,
                     CardName = card.CardName,
                     CVC = card.CVC,
-                    Month = card.Month, Year = card.Year,
+                    Date =card.Date,
                     IsDefault = card.IsDefault,
                     Pan = card.Pan
                 });
-                return Ok(new ApiResponseModel { IsOkStatus = true});
+                return Ok(new ApiResponseModel<DBNull> { IsOkStatus = true});
             }
             catch (Exception ex)
             {
-                return NotFound(new ApiResponseModel { IsOkStatus = false, ErrorMessage = new ErrorMessage
+                return NotFound(new ApiResponseModel<ErrorMessage> { IsOkStatus = false, Data = new ErrorMessage
                 {
                     Code = Code.CardAddingError,
-                    Message = ex.Message
-                } });
+                   Message = ex.Message
+                }});
             }
         }
 
@@ -127,21 +127,21 @@ namespace CardService.Controller
         /// <resposne code="404">card is not updated</resposne>
 
         [HttpPost("updatename")]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ApiResponseModel<Card>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
         public ActionResult UpdateCardName([FromBody] CardUpdateNameData data)
         {
            
             var updatedCard = _repository.UpdateCardName(data.cardId, data.cardNewName);
 
             if (updatedCard != null)
-                return Ok(new ApiResponseModel { IsOkStatus = true, Data = updatedCard });
+                return Ok(new ApiResponseModel<Card>{ IsOkStatus = true, Data = updatedCard });
             else
-                return NotFound(new ApiResponseModel
+                return NotFound(new ApiResponseModel<ErrorMessage>
                 {
                     IsOkStatus = false,
-                    ErrorMessage = new ErrorMessage { Code = Code.UpdateCardNameError, Message = "Updating Error" },
+                    Data = new ErrorMessage { Code = Code.UpdateCardNameError, Message = "Updating Error" },
                 });
         }
         /// <summary>
@@ -154,17 +154,26 @@ namespace CardService.Controller
         /// Response: only 200OK status if card was deleted or error code status
         /// </remarks>
         [HttpPost("delete")]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(ApiResponseModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ApiResponseModel<DBNull>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         public ActionResult DeleteCard([FromBody] Guid card)
         {
             if (_repository.DeleteCard(card))
-                return Ok(new ApiResponseModel { IsOkStatus = true });
+                return Ok(new ApiResponseModel<DBNull> { IsOkStatus = true });
 
-            return BadRequest(new ApiResponseModel
+            return BadRequest(new ApiResponseModel<ErrorMessage>
             {
                 IsOkStatus = false,
-                ErrorMessage = new ErrorMessage { Code = Code.CardDeleteError, Message = "Card delete Error" }
+                Data = new ErrorMessage { Code = Code.CardDeleteError, Message = "Card delete Error" }
+            });
+        }
+
+        private ActionResult SendError(ErrorMessage message)
+        {
+            return   BadRequest(new ApiResponseModel<ErrorMessage>
+            {
+                IsOkStatus = false,
+                Data  = message
             });
         }
     }

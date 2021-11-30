@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CardService.Domain;
+using CardService.Utils.Validators.Attributes;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace CardService.Models.Request
@@ -12,14 +14,15 @@ namespace CardService.Models.Request
         
         [StringLength(3)]
         public string CVC { get; set; }
-        
+
+        [PanValidator(ErrorMessage = "Pan validation error")]
         [StringLength(16)]
         public string Pan { get; set; }
 
         public bool IsDefault { get; set; }
-
-        public int Month { get; set; } 
-        public int Year { get; set; }
+       
+        [CardDateValidator(ErrorMessage = "Card date validation error")]
+       public CardDateExpired Date { get; set; }
 
         public string CardName { get; set; }
     }

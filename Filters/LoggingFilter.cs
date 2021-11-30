@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipelines;
 using System.Text;
 
 namespace CardService.Filters
@@ -31,19 +32,16 @@ namespace CardService.Filters
            
         }
 
-        public void OnActionExecuting(ActionExecutingContext context)
+        public async void OnActionExecuting(ActionExecutingContext context)
         {
             var request = context.HttpContext.Request;
 
-            if (context.HttpContext.Request.Method == "GET") 
+            _logger.LogInformation($"Request: Path:{request.Path.Value} to Action: {context.ActionDescriptor.DisplayName}");
+            if (request.Query != null)
             {
-                _logger.LogInformation($"Request: Path:{request.Path.Value} to Action: {context.ActionDescriptor.DisplayName}");
-                if (request.Query != null)
+                foreach (var item in request.Query)
                 {
-                    foreach (var item in request.Query)
-                    {
-                        _logger.LogInformation($"paramseters: {nameof(item.Key)}: {item.Key} - {nameof(item.Value)}: {item.Value}");
-                    }
+                    _logger.LogInformation($"paramseters: {nameof(item.Key)}: {item.Key} - {nameof(item.Value)}: {item.Value}");
                 }
             }
         }
@@ -54,14 +52,13 @@ namespace CardService.Filters
             {
                 try
                 {
-                    var responseDataModel = okResult.Value as ApiResponseModel;
-                    if (responseDataModel != null)
+                    var responseDataModel = okResult.Value as ApiResponseModel<Card>;
+                    if (okResult.Value is ApiResponseModel<Card>)
                     {
 
-                        if ((context.HttpContext.Request.Method == "GET")
-                           && context.ActionDescriptor.DisplayName.Contains("GetCardByUserId"))
+                        if (context.HttpContext.Request.Method == "GET")
                         {
-                            if ((responseDataModel.Data is IList<Card> cards))
+                            if (responseDataModel.Data is IList<Card> cards)
                             {
                                 foreach (var card in cards)
                                 {
@@ -76,19 +73,17 @@ namespace CardService.Filters
                             }
                         }
 
-                        else if ((context.HttpContext.Request.Method == "POST")
-                          && context.ActionDescriptor.DisplayName.Contains("UpdateCardName"))
+                        else if (context.HttpContext.Request.Method == "POST")
                         {
                             if ((responseDataModel.IsOkStatus) && (responseDataModel.Data is Card card))
                             {
                                 _logger.LogInformation($"Card Id: {card.Id} name is changed {card.CardName}");
                             }
-                            else
-                            {
-                                _logger.LogError($"{DateTime.UtcNow}: {responseDataModel.ErrorMessage.Message} ");
-                            }
-
                         }
+                    }
+                    else if(okResult.Value is ApiResponseModel<ErrorMessage> error)
+                    {
+                        _logger.LogError($"error in Response: {error.Data.Message},error code: {error.Data.Code}");
                     }
                 }
 
