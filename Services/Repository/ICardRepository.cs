@@ -10,7 +10,7 @@ namespace CardService.Services
         void AddCard(Card card);
 
        List<Card> GetCardsByUserId(Guid userId);
-       Card UpdateCardName(Guid cardId, string cardName);
+       Card UpdateCardName(Guid userId,Guid cardId, string cardName);
        bool DeleteCard(Guid cardId);
        IEnumerable<Card> GetAllCards();
     }

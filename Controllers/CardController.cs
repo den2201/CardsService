@@ -65,7 +65,7 @@ namespace CardService.Controller
         /// <resposne code="404">card is not added error</resposne>
 
         [HttpPost("add")]
-        [ProducesResponseType(typeof(ApiResponseModel<ModelToAddCardDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponseModel<DBNull>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
         
@@ -126,14 +126,14 @@ namespace CardService.Controller
         /// <response code="200">card name is updated</response>
         /// <resposne code="404">card is not updated</resposne>
 
-        [HttpPost("updatename")]
+        [HttpPost("user/update/{userid}/card/{cardid}/{name}")]
         [ProducesResponseType(typeof(ApiResponseModel<Card>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
-        public ActionResult UpdateCardName([FromBody] CardUpdateNameData data)
+        public ActionResult UpdateCardName([FromRoute] Guid userid, Guid cardid, string name)
         {
            
-            var updatedCard = _repository.UpdateCardName(data.cardId, data.cardNewName);
+            var updatedCard = _repository.UpdateCardName(userid,cardid, name);
 
             if (updatedCard != null)
                 return Ok(new ApiResponseModel<Card>{ IsOkStatus = true, Data = updatedCard });

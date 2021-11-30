@@ -67,9 +67,9 @@ namespace CardService.Services.Repository
             return _cards.Where(x => x.UserId == userId).ToList();
         }
 
-        public Card UpdateCardName(Guid cardId, string cardName)
+        public Card UpdateCardName(Guid userID, Guid cardId, string cardName)
         {
-            var card = _cards.FirstOrDefault(x => x.Id == cardId);
+            var card = _cards.FirstOrDefault(x => x.UserId == userID && x.Id == cardId);
             if(card != null)
                 card.CardName = cardName;
             return card;
