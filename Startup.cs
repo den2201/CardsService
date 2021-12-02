@@ -24,6 +24,8 @@ using CardService.AppConfiguration;
 using CardService.Filters;
 using CardService.BackgroundTasks;
 using CardService.Models;
+using Microsoft.EntityFrameworkCore;
+using CardService.Models.Request;
 
 namespace CardService
 {
@@ -41,8 +43,8 @@ namespace CardService
             var appSettingsSection = Configuration.GetSection("AppSettings");
             services.AddMvc();
             services.Configure<AppSettings>(appSettingsSection);
-                    
-            services.AddSingleton<ICardRepository, MemoryRepository>();
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(Configuration["ConnectionStrings:PostgresConnString"]));
+            services.AddTransient<ICardRepository, DbRepository>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CardsApiServise", Version = "v1.0" });
@@ -54,7 +56,7 @@ namespace CardService
             { 
                 options.Filters.Add<LoggingFilter>(); 
             });
-           services.AddHostedService<DbCardsValidationService>();
+          //services.AddHostedService<DbCardsValidationService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository)
@@ -99,14 +101,14 @@ namespace CardService
                 app.Run(async (context) =>
                 {
                     var bodyBytes = context.Request.Body;
-                    Card card;
+                    ModelToAddCardDto card;
                     using (StreamReader reader = new StreamReader(bodyBytes))
                     {
                         bodyString = await reader.ReadToEndAsync();
                     }
                     try
                     {
-                        card = JsonConvert.DeserializeObject<Card>(bodyString);
+                        card = JsonConvert.DeserializeObject<ModelToAddCardDto>(bodyString);
                          cardRepository.AddCard(card);
                     }
                     catch (Exception ex)

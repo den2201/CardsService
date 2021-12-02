@@ -28,14 +28,14 @@ namespace CardService.BackgroundTasks
             {
                 try
                 {
-                    var cards = _cardRepository.GetAllCards();
-                    foreach (var card in cards)
-                    {
-                        if ((card.Date.Year < DateTime.Now.Year) ||
-                        (card.Date.Year == DateTime.Now.Year && card.Date.Month< DateTime.Now.Month))
-                            card.CardName = "Not Valid";
-                        await Task.Delay(5000, stoppingToken);
-                    }
+                    //var cards = _cardRepository.GetAllCards();
+                    //foreach (var card in cards)
+                    //{
+                    //    if ((card.Date.Year < DateTime.Now.Year) ||
+                    //    (card.Date.Year == DateTime.Now.Year && card.Date.Month< DateTime.Now.Month))
+                    //        card.CardName = "Not Valid";
+                    //    await Task.Delay(5000, stoppingToken);
+                    //}
                 }
                 catch (OperationCanceledException) { }
             }

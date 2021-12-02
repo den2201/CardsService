@@ -1,4 +1,5 @@
 ﻿using CardService.Domain;
+using CardService.Models.Request;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,12 +9,12 @@ namespace CardService.Utils.Validators.Attributes
     {
          protected override ValidationResult IsValid(object value, ValidationContext validationContext)
     {
-                if (value is CardDateExpired date)
+                if (value is CardDate date)
                 {
                     if ((date.Month < 1) || (date.Month > 12) ||
-                                        (date.Month < DateTime.Now.Year))
+                                        (date.Year < DateTime.Now.Year))
 
-                        return new ValidationResult("error");
+                        return new ValidationResult("Card Date expired error");
                 }
             return ValidationResult.Success;
         }

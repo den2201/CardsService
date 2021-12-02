@@ -11,7 +11,7 @@ namespace CardService.Models.Request
     public class ModelToAddCardDto
     {
         public Guid UserId { get; set; }
-        
+
         [StringLength(3)]
         public string CVC { get; set; }
 
@@ -20,10 +20,16 @@ namespace CardService.Models.Request
         public string Pan { get; set; }
 
         public bool IsDefault { get; set; }
-       
-        [CardDateValidator(ErrorMessage = "Card date validation error")]
-       public CardDateExpired Date { get; set; }
 
+        [CardDateValidator(ErrorMessage = "Card date validation error")]
+        public CardDate Date { get; set; }
+        
         public string CardName { get; set; }
+    }
+
+    public class CardDate
+    {
+       public int Month  { get; set; }
+       public int Year { get; set; }
     }
 }

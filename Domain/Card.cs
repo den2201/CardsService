@@ -1,6 +1,7 @@
 ﻿using CardService.Utils.Validators.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CardService.Domain
 {
@@ -16,6 +17,11 @@ namespace CardService.Domain
         public CardDateExpired Date { get; set; }
         public bool IsDefault { get; set; }
         public string CardName { get; set; }
+
+        public Card()
+        {
+            Date = new CardDateExpired();
+        }
     }
 
     public class CardDateExpired

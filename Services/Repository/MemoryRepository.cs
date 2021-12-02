@@ -1,4 +1,5 @@
 ﻿using CardService.Domain;
+using CardService.Models.Request;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace CardService.Services.Repository
                     Pan = "4397185796979658",
                     IsDefault = true,
                     CardName = "First card",
-                   Date = new CardDateExpired { Year = 2030, Month = 11},
+                  
                 },
                  new Card(){
                     Id = new Guid("506c2beb-92e2-47a4-acc5-e40a6c07df12"),
@@ -30,17 +31,17 @@ namespace CardService.Services.Repository
                     Pan = "2367000000019234",
                     IsDefault = false,
                     CardName = "Second card",
-                   Date = new CardDateExpired { Year = 1990, Month = 12},
+                   
                 },
             };
         }
-        public  void  AddCard(Card card)
+        public  void  AddCard(ModelToAddCardDto card)
         {
             _cards.Add(new Card { Id =  Guid.NewGuid(),
                 UserId = card.UserId, 
                 CardName = card.CardName, 
                 CVC = card.CVC,
-                Date = card.Date,
+               
                 IsDefault = card.IsDefault, 
                 Pan = card.Pan 
             });
@@ -67,12 +68,18 @@ namespace CardService.Services.Repository
             return _cards.Where(x => x.UserId == userId).ToList();
         }
 
-        public Card UpdateCardName(Guid userID, Guid cardId, string cardName)
+        public bool UpdateCardName(Guid userID, Guid cardId, string cardName)
         {
             var card = _cards.FirstOrDefault(x => x.UserId == userID && x.Id == cardId);
-            if(card != null)
+            if (card != null)
+            {
                 card.CardName = cardName;
-            return card;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
