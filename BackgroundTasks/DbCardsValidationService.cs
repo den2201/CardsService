@@ -29,7 +29,6 @@ namespace CardService.BackgroundTasks
             {
                 try
                 {
-                  
                 }
                 catch (OperationCanceledException) { }
             }

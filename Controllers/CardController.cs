@@ -75,7 +75,6 @@ namespace CardService.Controller
             var response = new ApiResponseModel<Dictionary<Guid,CardDto>> { Data = cardDtos, IsOkStatus = true };
             var jsonString = JsonConvert.SerializeObject(response);
             return await Task.FromResult<ActionResult>(Ok(jsonString));
-            return null;
         }
 
 
