@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CardService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211202081438_Init")]
+    [Migration("20211204193351_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,42 +22,11 @@ namespace CardService.Migrations
                 .HasAnnotation("ProductVersion", "5.0.12")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            modelBuilder.Entity("CardService.Database.Entites.CardDateEntity", b =>
-                {
-                    b.Property<Guid>("CardId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Month")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Year")
-                        .HasColumnType("integer");
-
-                    b.HasKey("CardId");
-
-                    b.ToTable("ExpiredDates");
-
-                    b.HasData(
-                        new
-                        {
-                            CardId = new Guid("c937c286-2522-4dfb-99bd-94d9f7f7e04b"),
-                            Month = 12,
-                            Year = 2023
-                        },
-                        new
-                        {
-                            CardId = new Guid("506c2beb-92e2-47a4-acc5-e40a6c07df12"),
-                            Month = 5,
-                            Year = 2019
-                        });
-                });
-
-            modelBuilder.Entity("CardService.Database.Entites.CardEntity", b =>
+            modelBuilder.Entity("CardService.Domain.Card", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("CardId");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("CVC")
                         .HasColumnType("text");
@@ -99,20 +68,36 @@ namespace CardService.Migrations
                         });
                 });
 
-            modelBuilder.Entity("CardService.Database.Entites.CardDateEntity", b =>
+            modelBuilder.Entity("CardService.Domain.CardDateExpired", b =>
                 {
-                    b.HasOne("CardService.Database.Entites.CardEntity", "Card")
-                        .WithOne("Date")
-                        .HasForeignKey("CardService.Database.Entites.CardDateEntity", "CardId")
+                    b.Property<Guid>("CardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CardId");
+
+                    b.ToTable("CardDateExpired");
+                });
+
+            modelBuilder.Entity("CardService.Domain.CardDateExpired", b =>
+                {
+                    b.HasOne("CardService.Domain.Card", "Card")
+                        .WithOne("CardDateExpired")
+                        .HasForeignKey("CardService.Domain.CardDateExpired", "CardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Card");
                 });
 
-            modelBuilder.Entity("CardService.Database.Entites.CardEntity", b =>
+            modelBuilder.Entity("CardService.Domain.Card", b =>
                 {
-                    b.Navigation("Date");
+                    b.Navigation("CardDateExpired");
                 });
 #pragma warning restore 612, 618
         }
