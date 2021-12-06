@@ -8,7 +8,7 @@ namespace CardService.Models.Request
     /// <summary>
     /// DTO Card model without some Properties
     /// </summary>
-    public class ModelToAddCardDto
+    public class CardDto
     {
         public Guid UserId { get; set; }
 
@@ -29,7 +29,7 @@ namespace CardService.Models.Request
 
     public class CardDate
     {
-       public int Month  { get; set; }
-       public int Year { get; set; }
+        public int Month { get; set; }
+        public int Year { get; set; }
     }
 }

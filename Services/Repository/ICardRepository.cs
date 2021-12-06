@@ -1,18 +1,16 @@
 ﻿using CardService.Domain;
-using CardService.Models.Request;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
-namespace CardService.Services
+namespace CardService.Services.Repository
 {
-    public interface ICardRepository
+    public interface ICardRepository : IRepository
     {
-        void AddCard(ModelToAddCardDto card);
-
-       List<Card> GetCardsByUserId(Guid userId);
-       bool UpdateCardName(Guid userId,Guid cardId, string cardName);
-       bool DeleteCard(Guid cardId);
-       IEnumerable<Card> GetAllCards();
+        Task<Card> GetById(Guid id);
+        Task<bool> Update(Guid cardId, string newCardName);
+        Task <IEnumerable<Card>> GetByUserId(Guid userId);
+       
     }
 }

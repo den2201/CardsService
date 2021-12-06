@@ -56,7 +56,7 @@ namespace CardService
             { 
                 options.Filters.Add<LoggingFilter>(); 
             });
-          //services.AddHostedService<DbCardsValidationService>();
+        //  services.AddHostedService<DbCardsValidationService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository)
@@ -76,8 +76,8 @@ namespace CardService
             app.UseMiddleware<RequestLogService>();
            
 
-            app.Map("/addcard", AddCard);
-            app.Map("/getcard", GetCard);
+            //app.Map("/addcard", AddCard);
+            //app.Map("/getcard", GetCard);
             app.UseRouting();
             
             app.UseEndpoints(endpoint =>
@@ -95,70 +95,70 @@ namespace CardService
             ///
             /// card adding middleware method
             ///
-            void AddCard(IApplicationBuilder app)
-            {
-                var bodyString = "";
-                app.Run(async (context) =>
-                {
-                    var bodyBytes = context.Request.Body;
-                    ModelToAddCardDto card;
-                    using (StreamReader reader = new StreamReader(bodyBytes))
-                    {
-                        bodyString = await reader.ReadToEndAsync();
-                    }
-                    try
-                    {
-                        card = JsonConvert.DeserializeObject<ModelToAddCardDto>(bodyString);
-                         cardRepository.AddCard(card);
-                    }
-                    catch (Exception ex)
-                    {
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        await context.Response.WriteAsync(ex.Message);
-                    }
-                    context.Response.StatusCode = 200;
-                    await context.Response.WriteAsync("Card is Added");
-                });
-            }
+            //void AddCard(IApplicationBuilder app)
+            //{
+            //    var bodyString = "";
+            //    app.Run(async (context) =>
+            //    {
+            //        var bodyBytes = context.Request.Body;
+            //        ModelToAddCardDto card;
+            //        using (StreamReader reader = new StreamReader(bodyBytes))
+            //        {
+            //            bodyString = await reader.ReadToEndAsync();
+            //        }
+            //        try
+            //        {
+            //            card = JsonConvert.DeserializeObject<ModelToAddCardDto>(bodyString);
+            //             cardRepository.AddCard(card);
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            //            await context.Response.WriteAsync(ex.Message);
+            //        }
+            //        context.Response.StatusCode = 200;
+            //        await context.Response.WriteAsync("Card is Added");
+            //    });
+            //}
             ///
             /// cards getting middleware method
             ///
-             void GetCard(IApplicationBuilder app)
-            {
-                app.Run(async (context) =>
-                {
-                    try
-                    {
-                        var value = context.Request.Path.Value;
-                        Guid id = new();
-                        string json = string.Empty;
-                        var userIdParams = context.Request.Query.Where(x => x.Key == "userid").FirstOrDefault();
-                        id = Guid.Parse(userIdParams.Value);
-                        var cards = cardRepository.GetCardsByUserId(id);
-                        if(cards.Count() > 0)
-                          json = JsonConvert.SerializeObject(cards);
+            // void GetCard(IApplicationBuilder app)
+            //{
+            //    app.Run(async (context) =>
+            //    {
+            //        try
+            //        {
+            //            var value = context.Request.Path.Value;
+            //            Guid id = new();
+            //            string json = string.Empty;
+            //            var userIdParams = context.Request.Query.Where(x => x.Key == "userid").FirstOrDefault();
+            //            id = Guid.Parse(userIdParams.Value);
+            //            var cards = cardRepository.GetCardsByUserId(id);
+            //            if(cards.Count() > 0)
+            //              json = JsonConvert.SerializeObject(cards);
 
-                        if (!string.IsNullOrEmpty(json))
-                        {
-                            context.Response.ContentType = "application/json";
-                            context.Response.StatusCode = StatusCodes.Status200OK;
-                            await context.Response.WriteAsync(json);
-                        }
-                        else
-                        {
-                            context.Response.StatusCode = StatusCodes.Status404NotFound;
-                            await context.Response.WriteAsync("Not Found");
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        context.Response.ContentType = "text/html";
-                        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-                        await context.Response.WriteAsync(ex.Message);
-                    }
-                });
+            //            if (!string.IsNullOrEmpty(json))
+            //            {
+            //                context.Response.ContentType = "application/json";
+            //                context.Response.StatusCode = StatusCodes.Status200OK;
+            //                await context.Response.WriteAsync(json);
+            //            }
+            //            else
+            //            {
+            //                context.Response.StatusCode = StatusCodes.Status404NotFound;
+            //                await context.Response.WriteAsync("Not Found");
+            //            }
+            //        }
+            //        catch(Exception ex)
+            //        {
+            //            context.Response.ContentType = "text/html";
+            //            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            //            await context.Response.WriteAsync(ex.Message);
+            //        }
+            //    });
 
-            }
+            
         }
     }
 }
