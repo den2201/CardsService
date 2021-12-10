@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CardService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211204193351_Init")]
+    [Migration("20211208152044_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -82,6 +82,42 @@ namespace CardService.Migrations
                     b.HasKey("CardId");
 
                     b.ToTable("CardDateExpired");
+
+                    b.HasData(
+                        new
+                        {
+                            CardId = new Guid("c937c286-2522-4dfb-99bd-94d9f7f7e04b"),
+                            Month = 12,
+                            Year = 2023
+                        },
+                        new
+                        {
+                            CardId = new Guid("506c2beb-92e2-47a4-acc5-e40a6c07df12"),
+                            Month = 5,
+                            Year = 2030
+                        });
+                });
+
+            modelBuilder.Entity("CardService.Domain.TransactionHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<float>("Amount")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("CardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TransactionName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardId");
+
+                    b.ToTable("TransactionHistory");
                 });
 
             modelBuilder.Entity("CardService.Domain.CardDateExpired", b =>
@@ -95,9 +131,22 @@ namespace CardService.Migrations
                     b.Navigation("Card");
                 });
 
+            modelBuilder.Entity("CardService.Domain.TransactionHistory", b =>
+                {
+                    b.HasOne("CardService.Domain.Card", "Card")
+                        .WithMany("TransList")
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
+                });
+
             modelBuilder.Entity("CardService.Domain.Card", b =>
                 {
                     b.Navigation("CardDateExpired");
+
+                    b.Navigation("TransList");
                 });
 #pragma warning restore 612, 618
         }

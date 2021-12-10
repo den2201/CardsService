@@ -108,14 +108,14 @@ namespace CardService.Controller
                     errors.Append(error.ErrorMessage);
                     errors.AppendLine();
                 }
-                return BadRequest(new ApiResponseModel<ErrorMessage> { IsOkStatus = false, Data = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = errors.ToString() } });
+                return BadRequest(new ApiResponseModel<ErrorMessage> { IsOkStatus = false, Data = new ErrorMessage { Code = Code.IncorrectRequestData, Message = errors.ToString() } });
             }
 
             if (card == null)
                 return BadRequest(new ApiResponseModel<ErrorMessage>
                 {
                     IsOkStatus = false,
-                    Data = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = "Incorrect input data" },
+                    Data = new ErrorMessage { Code = Code.IncorrectRequestData, Message = "Incorrect input data" },
                 });
 
             try

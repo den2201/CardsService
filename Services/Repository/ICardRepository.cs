@@ -10,7 +10,8 @@ namespace CardService.Services.Repository
     {
         Task<Card> GetById(Guid id);
         Task<bool> Update(Guid cardId, string newCardName);
-        Task <IEnumerable<Card>> GetByUserId(Guid userId);
-       
+        Task<IEnumerable<Card>> GetByUserId(Guid userId);
+        Task<bool> AddTransactionByCardId(Guid cardId, string name, float amount);
+        Task<bool> AddTransactioAllUsers(string name, float amount);
     }
 }

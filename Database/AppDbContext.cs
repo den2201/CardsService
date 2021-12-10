@@ -7,6 +7,7 @@ namespace CardService.Domain
     public class AppDbContext :DbContext
     {
        public DbSet<Card> Cards { get; set; }
+       public DbSet<TransactionHistory> TransactionHistory { get; set; }
         public DbSet<CardDateExpired> CardDateExpired { get; set; }
       
         public AppDbContext(DbContextOptions<AppDbContext> option) : base(option) { }
@@ -56,6 +57,12 @@ namespace CardService.Domain
                     Year = 2030
                 });
 
+            modelBuilder.Entity<TransactionHistory>(t =>
+            t.HasKey(t => t.Id));
+            modelBuilder.Entity<Card>(x =>
+            x.HasMany(x => x.TransList).WithOne(x => x.Card).HasForeignKey(x => x.CardId));
+
+          
             modelBuilder.Entity<CardDateExpired>(a =>
             {
                 a.HasOne(x => x.Card)

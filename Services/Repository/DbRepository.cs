@@ -22,6 +22,49 @@ namespace CardService.Services.Repository
             await _appDbContext.SaveChangesAsync();
         }
 
+        public async Task<bool> AddTransactionByCardId(Guid guid, string name, float amount)
+        {
+            bool IsTransactionAdded = false;
+            var cards = _appDbContext.Cards.Where(x => x.Id == guid);
+           
+            if (cards.Any())
+            {
+                var card = cards.First();
+               await _appDbContext.TransactionHistory.AddAsync(new TransactionHistory
+                {
+                    Id = Guid.NewGuid(),
+                    CardId = card.Id,
+                    Amount = amount,
+                    TransactionName = name
+                });
+                await _appDbContext.SaveChangesAsync();
+                return true;
+            }
+            
+            return false;
+        }
+
+        public async Task<bool> AddTransactioAllUsers(string name, float amount)
+        {
+            var defaultCardsIds =  _appDbContext.Cards.Where(x => x.IsDefault == true).Select(x => x.Id);
+            if (defaultCardsIds is not null)
+            {
+                foreach (var cardId in defaultCardsIds)
+                {
+                    await _appDbContext.TransactionHistory.AddAsync(new TransactionHistory
+                    {
+                        Id = Guid.NewGuid(),
+                        CardId = cardId,
+                        Amount = amount,
+                        TransactionName = name
+                    });
+                }
+                await _appDbContext.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+
         public async Task<bool> Delete<T>(T enity) where T : IEntity
         {
             try
@@ -65,5 +108,6 @@ namespace CardService.Services.Repository
                 return false;
             }
         }
+
     }
 }

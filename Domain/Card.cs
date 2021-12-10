@@ -1,6 +1,7 @@
 ﻿using CardService.Services.Repository;
 using CardService.Utils.Validators.Attributes;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,6 +18,7 @@ namespace CardService.Domain
         public string Pan { get; set; }
         public bool IsDefault { get; set; }
         public string CardName { get; set; }
+        public List<TransactionHistory> TransList { get; set; }
         public CardDateExpired CardDateExpired { get; set; }
 
     }

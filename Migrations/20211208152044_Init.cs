@@ -48,6 +48,28 @@ namespace CardService.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TransactionHistory",
+                schema: "public",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    TransactionName = table.Column<string>(type: "text", nullable: true),
+                    CardId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Amount = table.Column<float>(type: "real", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TransactionHistory", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TransactionHistory_Cards_CardId",
+                        column: x => x.CardId,
+                        principalSchema: "public",
+                        principalTable: "Cards",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.InsertData(
                 schema: "public",
                 table: "Cards",
@@ -57,12 +79,32 @@ namespace CardService.Migrations
                     { new Guid("c937c286-2522-4dfb-99bd-94d9f7f7e04b"), "123", "First card", true, "4397185796979658", new Guid("3bad8330-d287-4319-bb3f-1f9be9331814") },
                     { new Guid("506c2beb-92e2-47a4-acc5-e40a6c07df12"), "666", "Second card", false, "2367000000019234", new Guid("3bad8330-d287-4319-bb3f-1f9be9331814") }
                 });
+
+            migrationBuilder.InsertData(
+                schema: "public",
+                table: "CardDateExpired",
+                columns: new[] { "CardId", "Month", "Year" },
+                values: new object[,]
+                {
+                    { new Guid("c937c286-2522-4dfb-99bd-94d9f7f7e04b"), 12, 2023 },
+                    { new Guid("506c2beb-92e2-47a4-acc5-e40a6c07df12"), 5, 2030 }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransactionHistory_CardId",
+                schema: "public",
+                table: "TransactionHistory",
+                column: "CardId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "CardDateExpired",
+                schema: "public");
+
+            migrationBuilder.DropTable(
+                name: "TransactionHistory",
                 schema: "public");
 
             migrationBuilder.DropTable(

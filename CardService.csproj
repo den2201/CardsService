@@ -6,16 +6,18 @@
 	<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 	<NoWarn>1519</NoWarn>
+	<UserSecretsId>f0b67032-f91b-4f07-af2f-e66c602fa268</UserSecretsId>
+	<DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+	<DockerfileContext>.</DockerfileContext>
 </PropertyGroup>
  
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.12">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
     <PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />

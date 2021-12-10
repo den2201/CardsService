@@ -96,6 +96,28 @@ namespace CardService.Migrations
                         });
                 });
 
+            modelBuilder.Entity("CardService.Domain.TransactionHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<float>("Amount")
+                        .HasColumnType("real");
+
+                    b.Property<Guid>("CardId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("TransactionName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CardId");
+
+                    b.ToTable("TransactionHistory");
+                });
+
             modelBuilder.Entity("CardService.Domain.CardDateExpired", b =>
                 {
                     b.HasOne("CardService.Domain.Card", "Card")
@@ -107,9 +129,22 @@ namespace CardService.Migrations
                     b.Navigation("Card");
                 });
 
+            modelBuilder.Entity("CardService.Domain.TransactionHistory", b =>
+                {
+                    b.HasOne("CardService.Domain.Card", "Card")
+                        .WithMany("TransList")
+                        .HasForeignKey("CardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Card");
+                });
+
             modelBuilder.Entity("CardService.Domain.Card", b =>
                 {
                     b.Navigation("CardDateExpired");
+
+                    b.Navigation("TransList");
                 });
 #pragma warning restore 612, 618
         }
