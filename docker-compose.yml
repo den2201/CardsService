@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  cardservice:
+    image: ${DOCKER_REGISTRY-}cardservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - "7000:80"
+     - "7001:443"
+    environment:
+      ASPNETCORE_URLS: "https://+:443;http://+:80"
+      ASPNETCORE_HTTPS_PORT: "7001"
+      ASPNETCORE_ENVIRONMENT: "Development"
+    volumes:
+     - ${APPDATA}\microsoft\UserSecrets\:/root/.microsoft/usersecrets 
+     - ${USERPROFILE}\.aspnet\https:/root/.aspnet/https/ 
+
+
+    
+     
+

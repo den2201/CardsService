@@ -27,6 +27,16 @@ namespace CardService.Controller
         {
             _repository = repository;
         }
+        /// <summary>
+        /// Test methos Todo: delete
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public  string Test()
+        { 
+            return "hello";
+        }
 
         /// <summary>
         /// Gets list of cards by user id
@@ -39,7 +49,7 @@ namespace CardService.Controller
         /// </remarks>
         /// <response code="200">Returns existing cards</response>
         /// <resposne code="404">no cards</resposne>
-
+       
         [HttpGet("user/{userid}")]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
@@ -165,13 +175,13 @@ namespace CardService.Controller
            var isNameUpdated = await _repository.Update(cardId, newName);
             
            if (isNameUpdated)
-                return await Task.FromResult(Ok(new ApiResponseModel<DBNull>{ IsOkStatus = true}));
+                return Ok(new ApiResponseModel<DBNull>{ IsOkStatus = true});
            else
-                return await Task.FromResult(NotFound(new ApiResponseModel<ErrorMessage>
+                return NotFound(new ApiResponseModel<ErrorMessage>
                 {
                     IsOkStatus = false,
                     Data = new ErrorMessage { Code = Code.UpdateCardNameError, Message = "Updating Error" },
-                }));
+                });
         }
         /// <summary>
         /// deletes card by card id (Guid)
@@ -191,14 +201,14 @@ namespace CardService.Controller
             if (card is not null)
             {
                 await _repository.Delete(card);
-                return await Task.FromResult<ActionResult>(Ok(new ApiResponseModel<DBNull> { IsOkStatus = true }));
+                return  Ok(new ApiResponseModel<DBNull> { IsOkStatus = true });
             }
 
-            return await Task.FromResult(BadRequest(new ApiResponseModel<ErrorMessage>
+            return  BadRequest(new ApiResponseModel<ErrorMessage>
             {
                 IsOkStatus = false,
                 Data = new ErrorMessage { Code = Code.CardDeleteError, Message = "Card delete Error" }
-            }));
+            });
         }
     }
 }
