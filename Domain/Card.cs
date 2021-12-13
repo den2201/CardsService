@@ -18,7 +18,7 @@ namespace CardService.Domain
         public string Pan { get; set; }
         public bool IsDefault { get; set; }
         public string CardName { get; set; }
-        public List<TransactionHistory> TransList { get; set; }
+        public List<TransactionHistory> TransactionHistoryData { get; set; }
         public CardDateExpired CardDateExpired { get; set; }
 
     }

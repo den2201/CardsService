@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace CardService.Controllers
 {
-   
 
-   
+    [ApiController]
+    [Route("api/transaction")]
     public class TransactionController : ControllerBase
     {
         private readonly ICardRepository _repository;
@@ -33,7 +33,7 @@ namespace CardService.Controllers
         /// <response code="200">card name is updated</response>
         /// <resposne code="404">card is not updated</resposne>
 
-        [HttpPost("transaction/add/cardId")]
+        [HttpPost("cardId")]
         [ProducesResponseType(typeof(ApiResponseModel<Card>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
@@ -69,7 +69,7 @@ namespace CardService.Controllers
         /// <response code="200">transaction is created</response>
         /// <resposne code="404">transaction is not created</resposne>
 
-        [HttpPost("transaction/add/allusers")]
+        [HttpPost("allusers")]
         [ProducesResponseType(typeof(ApiResponseModel<Card>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
@@ -106,7 +106,7 @@ namespace CardService.Controllers
         /// <response code="200">transaction is created</response>
         /// <resposne code="404">transaction is not created</resposne>
 
-        [HttpPost("transaction/add/newcard")]
+        [HttpPost("newcard")]
         [ProducesResponseType(typeof(ApiResponseModel<Card>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]

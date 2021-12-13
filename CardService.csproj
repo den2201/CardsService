@@ -6,12 +6,11 @@
 		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>1519</NoWarn>
-		<UserSecretsId>A11E232F-AD54-4588-A312-72E0E0E52BEA</UserSecretsId>
+		<UserSecretsId>f0b67032-f91b-4f07-af2f-e66c602fa268</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		<DockerfileContext>.</DockerfileContext>
 		<DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
-
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.12" />

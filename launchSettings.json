@@ -4,12 +4,13 @@
       "commandName": "DockerCompose",
       "composeLaunchAction": "LaunchBrowser",
       "composeLaunchServiceName": "cardservice",
-      "composeLaunchUrl": "{Scheme}://localhost:{ServicePort}/swagger",
+      "composeLaunchUrl": "http://localhost:{ServicePort}/swagger",
       "commandVersion": "1.0",
       "serviceActions": {
         "cardservice": "StartDebugging"
       },
-      "useSSl": true
+      "publishAllPorts": true,
+      "useSSl": false
     }
   }
 }
