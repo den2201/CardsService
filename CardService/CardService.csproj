@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<NoWarn>1519</NoWarn>
+		<UserSecretsId>f0b67032-f91b-4f07-af2f-e66c602fa268</UserSecretsId>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<DockerfileContext>.</DockerfileContext>
+		<DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MassTransit" Version="7.3.0" />
+		<PackageReference Include="MassTransit.AspNetCore" Version="7.3.0" />
+		<PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.12" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.12">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="2.2.7" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.10" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.0.2" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.3" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.2.3" />
+		<PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
+		<PackageReference Include="System.Linq" Version="4.3.0" />
+		<PackageReference Include="xunit" Version="2.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\SharedEntities\SharedEntities.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Models\Response\" />
+	</ItemGroup>
+
+</Project>
