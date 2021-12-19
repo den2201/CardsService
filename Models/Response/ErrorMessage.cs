@@ -13,11 +13,12 @@
     /// </summary>
     public enum Code
     {
-        IncorrectRrequestData = 1,
+        IncorrectRequestData = 1,
         UpdateCardNameError,
         CardNotFound,
         CardDeleteError,
-        CardAddingError
+        CardAddingError,
+        TransactionErrror
     }
        
 }

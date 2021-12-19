@@ -28,7 +28,7 @@ namespace CardService.Utils.Validators.Attributes
             {
                 return ValidationResult.Success;
             }
-           return new ValidationResult("unknown error");
+           return new ValidationResult("Luna test is not passed");
         }
         private bool IsLunaTestPassedOk(int[] digitArray)
         {

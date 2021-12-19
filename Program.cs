@@ -4,10 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CardService
 {
@@ -23,6 +19,7 @@ namespace CardService
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    webBuilder.UseIIS();
                     webBuilder.ConfigureKestrel(kestrel =>
                     {
                         kestrel.Limits.MaxConcurrentConnections = 5;

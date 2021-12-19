@@ -1,5 +1,6 @@
 ﻿using CardService.Domain;
 using CardService.Services;
+using CardService.Services.Repository;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -28,14 +29,6 @@ namespace CardService.BackgroundTasks
             {
                 try
                 {
-                    var cards = _cardRepository.GetAllCards();
-                    foreach (var card in cards)
-                    {
-                        if ((card.Date.Year < DateTime.Now.Year) ||
-                        (card.Date.Year == DateTime.Now.Year && card.Date.Month< DateTime.Now.Month))
-                            card.CardName = "Not Valid";
-                        await Task.Delay(5000, stoppingToken);
-                    }
                 }
                 catch (OperationCanceledException) { }
             }

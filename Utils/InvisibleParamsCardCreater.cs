@@ -10,7 +10,7 @@ namespace CardService.Utils
             {
                 CVC = HideCvcCode(entity.CVC),
                 Pan = HidePanCode(entity.Pan),
-                Date = entity.Date,
+               
                 CardName = entity.CardName,
                 Id = entity.Id,
                 IsDefault = entity.IsDefault,

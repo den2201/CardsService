@@ -3,14 +3,17 @@ using CardService.Filters;
 using CardService.Models;
 using CardService.Models.Request;
 using CardService.Services;
+using CardService.Services.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CardService.Controller
 {
@@ -24,6 +27,16 @@ namespace CardService.Controller
         {
             _repository = repository;
         }
+        /// <summary>
+        /// Test methos Todo: delete
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("test")]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        public  string Test()
+        { 
+            return "hello";
+        }
 
         /// <summary>
         /// Gets list of cards by user id
@@ -36,22 +49,42 @@ namespace CardService.Controller
         /// </remarks>
         /// <response code="200">Returns existing cards</response>
         /// <resposne code="404">no cards</resposne>
-
+       
         [HttpGet("user/{userid}")]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
-        public ActionResult GetCardByUserId([FromRoute] Guid userid)
+        public async Task<ActionResult> GetCardByUserId([FromRoute] Guid userid)
         {
-            var cards = _repository.GetCardsByUserId(userid);
-            if((cards == null) || (cards.Count == 0))
+          Dictionary<Guid,CardDto> cardDtos = new(); ;
+            var cards = await _repository.GetByUserId(userid) as List<Card>;
+            foreach( var card in cards)
             {
-                return NotFound(new ApiResponseModel<ErrorMessage> { IsOkStatus = false, Data = 
-                    new ErrorMessage{ Code = Code.CardNotFound, 
-                                          Message ="Not found" } });
+                cardDtos.Add(card.Id,new CardDto
+                {
+                    Pan = card.Pan,
+                    CardName = card.CardName,
+                    CVC = card.CVC,
+                    Date = new() { Month = card.CardDateExpired.Month, Year = card.CardDateExpired.Year },
+                    IsDefault = card.IsDefault,
+                    UserId = card.UserId
+                });
             }
-            var response = new ApiResponseModel<IEnumerable<Card>> { Data = cards, IsOkStatus = true };
+            if ((cards == null) || (cards.Count == 0))
+            {
+                return await Task.FromResult<ActionResult>(NotFound(new ApiResponseModel<ErrorMessage>
+                {
+                    IsOkStatus = false,
+                    Data =
+                    new ErrorMessage
+                    {
+                        Code = Code.CardNotFound,
+                        Message = "Not found"
+                    }
+                }));
+            }
+            var response = new ApiResponseModel<Dictionary<Guid,CardDto>> { Data = cardDtos, IsOkStatus = true };
             var jsonString = JsonConvert.SerializeObject(response);
-            return Ok(jsonString);
+            return await Task.FromResult<ActionResult>(Ok(jsonString));
         }
 
 
@@ -60,6 +93,11 @@ namespace CardService.Controller
         /// </summary>
         /// <param name="card"></param>
         /// <returns>Response model with flag of OK or Bad request result</returns>
+        /// <remarks>
+        /// Data for test:
+        /// user id : 3bad8330-d287-4319-bb3f-1f9be9331814
+        /// valid card pan : 4397185796979658
+        /// </remarks>
         /// <response code="200">card is added</response>
         /// <resposne code="400">request error</resposne>
         /// <resposne code="404">card is not added error</resposne>
@@ -69,7 +107,7 @@ namespace CardService.Controller
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
         
-        public ActionResult AddCard([FromBody] ModelToAddCardDto card)
+        public async Task<ActionResult> AddCard([FromBody] CardDto card)
         {
             if (!ModelState.IsValid)
             {
@@ -80,28 +118,30 @@ namespace CardService.Controller
                     errors.Append(error.ErrorMessage);
                     errors.AppendLine();
                 }
-                return BadRequest(new ApiResponseModel<ErrorMessage> { IsOkStatus = false, Data = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = errors.ToString() } });
+                return BadRequest(new ApiResponseModel<ErrorMessage> { IsOkStatus = false, Data = new ErrorMessage { Code = Code.IncorrectRequestData, Message = errors.ToString() } });
             }
 
             if (card == null)
                 return BadRequest(new ApiResponseModel<ErrorMessage>
                 {
                     IsOkStatus = false,
-                    Data = new ErrorMessage { Code = Code.IncorrectRrequestData, Message = "Incorrect input data" },
+                    Data = new ErrorMessage { Code = Code.IncorrectRequestData, Message = "Incorrect input data" },
                 });
 
             try
             {
-                _repository.AddCard(new Card
+               await _repository.Add(new Card
                 {
-                    Id = new Guid(),
-                    UserId = card.UserId,
+                    Id = Guid.NewGuid(),
                     CardName = card.CardName,
+                    Pan = card.Pan,
                     CVC = card.CVC,
-                    Date =card.Date,
+                    CardDateExpired = new CardDateExpired() { Year = card.Date.Year, Month = card.Date.Month },
                     IsDefault = card.IsDefault,
-                    Pan = card.Pan
+                    UserId = card.UserId,
+
                 });
+                
                 return Ok(new ApiResponseModel<DBNull> { IsOkStatus = true});
             }
             catch (Exception ex)
@@ -126,18 +166,17 @@ namespace CardService.Controller
         /// <response code="200">card name is updated</response>
         /// <resposne code="404">card is not updated</resposne>
 
-        [HttpPost("user/update/{userid}/card/{cardid}/{name}")]
+        [HttpPost("user/update/card/{cardId}/{newName}")]
         [ProducesResponseType(typeof(ApiResponseModel<Card>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status404NotFound)]
-        public ActionResult UpdateCardName([FromRoute] Guid userid, Guid cardid, string name)
+        public async Task<ActionResult> UpdateCardName([FromRoute] Guid cardId, string newName)
         {
-           
-            var updatedCard = _repository.UpdateCardName(userid,cardid, name);
-
-            if (updatedCard != null)
-                return Ok(new ApiResponseModel<Card>{ IsOkStatus = true, Data = updatedCard });
-            else
+           var isNameUpdated = await _repository.Update(cardId, newName);
+            
+           if (isNameUpdated)
+                return Ok(new ApiResponseModel<DBNull>{ IsOkStatus = true});
+           else
                 return NotFound(new ApiResponseModel<ErrorMessage>
                 {
                     IsOkStatus = false,
@@ -156,12 +195,16 @@ namespace CardService.Controller
         [HttpPost("delete/{cardid}")]
         [ProducesResponseType(typeof(ApiResponseModel<DBNull>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponseModel<ErrorMessage>), StatusCodes.Status400BadRequest)]
-        public ActionResult DeleteCard([FromRoute] Guid cardid)
+        public async Task<ActionResult> DeleteCard([FromRoute] Guid cardid)
         {
-            if (_repository.DeleteCard(cardid))
-                return Ok(new ApiResponseModel<DBNull> { IsOkStatus = true });
+            var card = await _repository.GetById(cardid);
+            if (card is not null)
+            {
+                await _repository.Delete(card);
+                return  Ok(new ApiResponseModel<DBNull> { IsOkStatus = true });
+            }
 
-            return BadRequest(new ApiResponseModel<ErrorMessage>
+            return  BadRequest(new ApiResponseModel<ErrorMessage>
             {
                 IsOkStatus = false,
                 Data = new ErrorMessage { Code = Code.CardDeleteError, Message = "Card delete Error" }

@@ -1,0 +1,16 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "cardservice",
+      "composeLaunchUrl": "http://localhost:{ServicePort}/swagger",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "cardservice": "StartDebugging"
+      },
+      "publishAllPorts": true,
+      "useSSl": false
+    }
+  }
+}

@@ -1,9 +1,10 @@
 {
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:31751",
+      "applicationUrl": "http://localhost:7788",
       "sslPort": 44347
     }
   },
@@ -21,8 +22,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:6001;http://localhost:6000",
-      "dotnetRunMessages": "true"
+      "applicationUrl": "http://localhost:5000"
     },
     "WSL": {
       "commandName": "WSL2",
@@ -33,6 +33,13 @@
         "ASPNETCORE_URLS": "https://localhost:6001;http://localhost:6000"
       },
       "distributionName": ""
+    },
+    "Docker": {
+      "commandName": "Docker",
+      "launchBrowser": true,
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
+      "publishAllPorts": true,
+      "useSSL": true
     }
   }
 }
