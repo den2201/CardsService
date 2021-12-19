@@ -29,7 +29,7 @@ namespace TransactionService.Apis
 
        public async Task<CardDto> GetDefaultCardByUserId(Guid userid)
         {
-            var cardDto = await _cardApiClient.GetFromJsonAsync<CardDto>($"api/cards/default{userid}");
+            var cardDto = await _cardApiClient.GetFromJsonAsync<CardDto>($"api/cards/default/{userid}");
             return cardDto;
         }
     }
