@@ -20,6 +20,11 @@ using TransactionService.Apis;
 using TransactionService.Datalayer;
 using TransactionService.Services;
 using TransactionService.Services.Repository;
+using Microsoft.Extensions.Http;
+using Polly.Extensions.Http;
+using System.Net;
+using Polly.Timeout;
+using Polly;
 
 namespace TransactionService
 {
@@ -32,11 +37,10 @@ namespace TransactionService
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services, ILogger<Startup> logger)
         {
 
             services.AddControllers();
-            
             services.AddLogging();
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(Configuration["ConnectionStrings:PostgresConnString"]));
             services.AddMassTransit(x =>
@@ -72,7 +76,21 @@ namespace TransactionService
             }).AddHttpMessageHandler(provider =>
             {
                 return new LoggingHAndler(provider.GetRequiredService<IHttpContextAccessor>());
-            });
+            }).SetHandlerLifetime(TimeSpan.FromMinutes(5)).AddPolicyHandler(p =>
+                HttpPolicyExtensions
+           .HandleTransientHttpError()
+           .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
+           .OrResult(msg => msg.StatusCode == HttpStatusCode.InternalServerError)
+           .Or<TimeoutRejectedException>()
+           .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)) )
+           )
+            .AddPolicyHandler((service, request) =>
+                                HttpPolicyExtensions.HandleTransientHttpError()
+                                    .CircuitBreakerAsync(5,
+                                                 TimeSpan.FromSeconds(30),
+                                                 (result, timeSpan, context) =>
+                                                            logger.LogError($"CircuitBreaker onBreak for {timeSpan.TotalMilliseconds} ms"),
+                                                  context => service.GetService<ILogger>().LogError("CircuitBreaker onReset")));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
