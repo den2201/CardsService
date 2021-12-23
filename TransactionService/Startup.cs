@@ -37,7 +37,7 @@ namespace TransactionService
 
         public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services, ILogger<Startup> logger)
+        public void ConfigureServices(IServiceCollection services)
         {
 
             services.AddControllers();
@@ -89,7 +89,7 @@ namespace TransactionService
                                     .CircuitBreakerAsync(5,
                                                  TimeSpan.FromSeconds(30),
                                                  (result, timeSpan, context) =>
-                                                            logger.LogError($"CircuitBreaker onBreak for {timeSpan.TotalMilliseconds} ms"),
+                                                            service.GetService<ILogger>().LogError($"CircuitBreaker onBreak for {timeSpan.TotalMilliseconds} ms"),
                                                   context => service.GetService<ILogger>().LogError("CircuitBreaker onReset")));
         }
 
