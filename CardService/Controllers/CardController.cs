@@ -16,11 +16,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CardService.Controller
 {
     [ApiController]
     [Route("api/cards")]
+    [Authorize]
     public class CardController : ControllerBase
     {
         private readonly ICardRepository _repository;

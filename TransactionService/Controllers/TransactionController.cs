@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using IdentityModel.Client;
+using MassTransit;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -54,6 +55,7 @@ namespace TransactionService.Controllers
                 try
                 {
                     logger.LogInformation($"Begin Action : {nameof(TransactionController)} {nameof(CreateTransactionByNewCard)} {DateTime.Now}");
+                    var document = cardApiClient.GetAuthorization();
                     var cardId = Guid.NewGuid();
                    transaction.Card.Id = cardId;
                     if (await repository.Add(cardId, transaction.TransactionName, transaction.Amount, transaction.Card))
@@ -83,6 +85,10 @@ namespace TransactionService.Controllers
         public async Task<ActionResult> CreateByCardId(TransactionByCardId transaction)
         {
             logger.LogInformation($"Begin Action : {nameof(TransactionController)} {nameof(TransactionByCardId)} {DateTime.Now}");
+            var client = new HttpClient();
+         
+           
+
             var cardData = await cardApiClient.GetCardInfo(transaction.CardId);
             if(cardData is not null)
             {
@@ -109,6 +115,8 @@ namespace TransactionService.Controllers
         public async Task<ActionResult> CreateByUsersDefaultCard(TransactionDefaultCard transaction)
         {
             logger.LogInformation($"Begin Action : {nameof(TransactionController)} {nameof(CreateByUsersDefaultCard)} {DateTime.Now}");
+            var client = new HttpClient();
+            var discoveryDocoment = await client.GetDiscoveryDocumentAsync("https://localhost:10001");
             var cardData = await cardApiClient.GetDefaultCardByUserId(transaction.UserId);
             if (cardData is not null)
             {

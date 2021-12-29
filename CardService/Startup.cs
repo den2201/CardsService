@@ -29,6 +29,7 @@ using CardService.Models.Request;
 using SharedEntities.Models;
 using MassTransit;
 using CardService.Consumers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CardService
 {
@@ -44,6 +45,12 @@ namespace CardService
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
+                {
+                    config.Authority = "https://localhost:10001";
+                    config.Audience = "CardAPI";
+                });                ;
             services.AddMvc();
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(Configuration["ConnectionStrings:PostgresConnString"]));
@@ -113,6 +120,8 @@ namespace CardService
             app.UseMiddleware<RequestLogService>();
            
             app.UseRouting();
+            app.UseAuthorization();
+            app.UseAuthentication();
             
             app.UseEndpoints(endpoint =>
             {

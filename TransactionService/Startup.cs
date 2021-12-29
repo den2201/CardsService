@@ -12,10 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using SharedEntities.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using TransactionService.Apis;
 using TransactionService.Datalayer;
 using TransactionService.Services;
@@ -42,6 +39,7 @@ namespace TransactionService
 
             services.AddControllers();
             services.AddLogging();
+            services.AddAuthentication();
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(Configuration["ConnectionStrings:PostgresConnString"]));
             services.AddMassTransit(x =>
             {
@@ -70,13 +68,12 @@ namespace TransactionService
             services.AddTransient<ITransactionRepository, TransactionRepository>();
             services.AddOptions();
             services.Configure<CardServiceSettings>(Configuration.GetSection("CardServiceApi"));
+            
             services.AddHttpClient<ICardApiClient, CardServiceApiClient>(t =>
             {
-                t.BaseAddress = new Uri("http://localhost:6000");
-            }).AddHttpMessageHandler(provider =>
-            {
-                return new LoggingHAndler(provider.GetRequiredService<IHttpContextAccessor>());
-            }).SetHandlerLifetime(TimeSpan.FromMinutes(5)).AddPolicyHandler(p =>
+                t.BaseAddress = new Uri("https://localhost:6001");
+            })
+            .SetHandlerLifetime(TimeSpan.FromMinutes(5)).AddPolicyHandler(p =>
                 HttpPolicyExtensions
            .HandleTransientHttpError()
            .OrResult(msg => msg.StatusCode == HttpStatusCode.NotFound)
@@ -120,6 +117,7 @@ namespace TransactionService
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

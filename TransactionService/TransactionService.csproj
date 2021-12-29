@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="6.0.0" />
     <PackageReference Include="MassTransit" Version="7.3.0" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.3.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
@@ -32,5 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="..\SharedEntities\SharedEntities.csproj" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="https://ffizer.github.io/ffizer/ffizer.schema.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

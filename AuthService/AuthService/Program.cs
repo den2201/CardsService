@@ -1,11 +1,11 @@
-using CardService.AppConfiguration;
+using AuthService;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace CardService
+namespace AuthService
 {
     public class Program
     {
@@ -19,6 +19,7 @@ namespace CardService
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    
                 });
     }
 }

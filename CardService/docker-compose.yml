@@ -6,3 +6,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+     - "6001:6001"
+     - "6000:6000"
+  transactionservice:
+    image: ${DOCKER_REGISTRY-}transactionservice
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - "7001:7001"
+     - "7000:7000"
