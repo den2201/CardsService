@@ -13,12 +13,13 @@ services:
        - mynetwork
   cardservice:
       image: ${DOCKER_REGISTRY}cardservice
+      restart: always
       build:
         context: .
         dockerfile: CardService/Dockerfile
       ports:
-          - 9007:80
-          - 9008:443
+          - 6000:80
+          - 6001:443
       links:
        - postgresserver
       depends_on:
@@ -27,12 +28,13 @@ services:
        - mynetwork
   transactionservice:
       image: ${DOCKER_REGISTRY}transactionservice
+      restart: always
       build:
         context: .
         dockerfile: TransactionService/Dockerfile
       ports:
-          - 10000:80
-          - 10001:443
+          - 7000:80
+          - 7001:443
       links:
        - postgresserver
       depends_on:

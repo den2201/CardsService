@@ -71,7 +71,7 @@ namespace CardService
                 x.AddConsumer<TransactionConsumer>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    cfg.Host(new Uri("rabbitmq://localhost:5672"), h =>
+                    cfg.Host(new Uri("rabbitmq://rabbitmq:5672"), h =>
                     {
                         h.Username("guest");
                         h.Password("guest");

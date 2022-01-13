@@ -22,6 +22,7 @@ using Polly.Extensions.Http;
 using System.Net;
 using Polly.Timeout;
 using Polly;
+using System.IO;
 
 namespace TransactionService
 {
@@ -45,7 +46,7 @@ namespace TransactionService
             {
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
                 {
-                    config.Host(new Uri("rabbitmq://localhost:5672"), h =>
+                    config.Host(new Uri("rabbitmq://rabbitmq:5672"), h =>
                     {
                         h.Username("guest");
                         h.Password("guest");
@@ -61,9 +62,11 @@ namespace TransactionService
                 }));
             });
             services.AddMassTransitHostedService();
-            services.AddSwaggerGen(c =>
+              services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TransactionService", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TransactionApiServise", Version = "v1.0" });
+                var filePath = Path.Combine(System.AppContext.BaseDirectory, $"{nameof(TransactionService)}.xml");
+                c.IncludeXmlComments(filePath);
             });
             services.AddTransient<ITransactionRepository, TransactionRepository>();
             services.AddOptions();
@@ -71,7 +74,7 @@ namespace TransactionService
             
             services.AddHttpClient<ICardApiClient, CardServiceApiClient>(t =>
             {
-                t.BaseAddress = new Uri("https://localhost:6001");
+                t.BaseAddress = new Uri("http://localhost:6000");
             })
             .SetHandlerLifetime(TimeSpan.FromMinutes(5)).AddPolicyHandler(p =>
                 HttpPolicyExtensions
@@ -95,9 +98,14 @@ namespace TransactionService
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TransactionService v1"));
+               
             }
+           app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                c.RoutePrefix = string.Empty;
+            });
             context.Database.EnsureCreated();
             app.Use(async (context, func) =>
             {
@@ -118,8 +126,6 @@ namespace TransactionService
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

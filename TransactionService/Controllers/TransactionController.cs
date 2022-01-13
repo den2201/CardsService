@@ -116,7 +116,7 @@ namespace TransactionService.Controllers
         {
             logger.LogInformation($"Begin Action : {nameof(TransactionController)} {nameof(CreateByUsersDefaultCard)} {DateTime.Now}");
             var client = new HttpClient();
-            var discoveryDocoment = await client.GetDiscoveryDocumentAsync("https://localhost:10001");
+            var discoveryDocoment = await client.GetDiscoveryDocumentAsync("http://localhost:6000");
             var cardData = await cardApiClient.GetDefaultCardByUserId(transaction.UserId);
             if (cardData is not null)
             {
