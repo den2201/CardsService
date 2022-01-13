@@ -19,7 +19,6 @@ namespace CardService
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    
                 });
     }
 }

@@ -8,14 +8,13 @@
 		<NoWarn>1519</NoWarn>
 		<UserSecretsId>f0b67032-f91b-4f07-af2f-e66c602fa268</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<DockerfileContext>.</DockerfileContext>
-		<DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="MassTransit" Version="7.3.0" />
 		<PackageReference Include="MassTransit.AspNetCore" Version="7.3.0" />
 		<PackageReference Include="MassTransit.RabbitMQ" Version="7.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.13" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.12" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.12">
 			<PrivateAssets>all</PrivateAssets>

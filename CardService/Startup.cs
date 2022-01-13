@@ -29,6 +29,7 @@ using CardService.Models.Request;
 using SharedEntities.Models;
 using MassTransit;
 using CardService.Consumers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace CardService
 {
@@ -44,6 +45,12 @@ namespace CardService
         public void ConfigureServices(IServiceCollection services)
         {
             var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
+                {
+                    config.Authority = "https://localhost:10001";
+                    config.Audience = "cardAPI";
+                });                ;
             services.AddMvc();
             services.Configure<AppSettings>(appSettingsSection);
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(Configuration["ConnectionStrings:PostgresConnString"]));
@@ -64,7 +71,7 @@ namespace CardService
                 x.AddConsumer<TransactionConsumer>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    cfg.Host(new Uri("rabbitmq://localhost:5672"), h =>
+                    cfg.Host(new Uri("rabbitmq://rabbitmq:5672"), h =>
                     {
                         h.Username("guest");
                         h.Password("guest");
@@ -81,12 +88,13 @@ namespace CardService
             //  services.AddHostedService<DbCardsValidationService>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository, AppDbContext context)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            context.Database.EnsureCreated();
 
             app.Use(async (context, func) =>
             {
@@ -103,7 +111,7 @@ namespace CardService
                 }
             });
 
-            app.UseCors("AnyOrigin");
+           
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -113,6 +121,8 @@ namespace CardService
             app.UseMiddleware<RequestLogService>();
            
             app.UseRouting();
+            app.UseAuthorization();
+            app.UseAuthentication();
             
             app.UseEndpoints(endpoint =>
             {
