@@ -1,0 +1,63 @@
+version: "3.7"
+services:
+  postgresserver:
+     image: postgres
+     restart: always
+     ports:
+       - 5432:5432
+     environment:
+         POSTGRES_PASSWORD: 220182
+     volumes:
+       - pgdata:/var/lib/postgresql/data
+     networks:
+       - mynetwork
+  cardservice:
+      image: ${DOCKER_REGISTRY}cardservice
+      build:
+        context: .
+        dockerfile: CardService/Dockerfile
+      ports:
+          - 9007:80
+          - 9008:443
+      links:
+       - postgresserver
+      depends_on:
+       - "postgresserver"
+      networks:
+       - mynetwork
+  transactionservice:
+      image: ${DOCKER_REGISTRY}transactionservice
+      build:
+        context: .
+        dockerfile: TransactionService/Dockerfile
+      ports:
+          - 10000:80
+          - 10001:443
+      links:
+       - postgresserver
+      depends_on:
+       - "postgresserver"
+      networks:
+       - mynetwork
+  rabbitmq:
+      image: rabbitmq:3.8-management-alpine
+      container_name: rabbitmq
+      hostname: rabbitmq
+      networks:
+       - mynetwork
+      ports:
+          - 5672:5672
+          - 15672:15672
+      volumes:
+          - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+          - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+volumes:
+  pgdata:
+          
+ 
+networks:
+  mynetwork:
+     driver: bridge
+  
+  
+    

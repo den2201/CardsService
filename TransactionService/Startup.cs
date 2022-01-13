@@ -90,7 +90,7 @@ namespace TransactionService
                                                   context => service.GetService<ILogger>().LogError("CircuitBreaker onReset")));
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppDbContext context)
         {
             if (env.IsDevelopment())
             {
@@ -98,6 +98,7 @@ namespace TransactionService
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TransactionService v1"));
             }
+            context.Database.EnsureCreated();
             app.Use(async (context, func) =>
             {
                 var logger = context.RequestServices.GetService<ILogger<Startup>>();

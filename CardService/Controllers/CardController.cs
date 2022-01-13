@@ -22,7 +22,6 @@ namespace CardService.Controller
 {
     [ApiController]
     [Route("api/cards")]
-    [Authorize]
     public class CardController : ControllerBase
     {
         private readonly ICardRepository _repository;

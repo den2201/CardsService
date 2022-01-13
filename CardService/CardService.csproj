@@ -8,8 +8,6 @@
 		<NoWarn>1519</NoWarn>
 		<UserSecretsId>f0b67032-f91b-4f07-af2f-e66c602fa268</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-		<DockerfileContext>.</DockerfileContext>
-		<DockerComposeProjectPath>docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 
 	<ItemGroup>

@@ -1,4 +1,5 @@
-﻿using IdentityModel.Client;
+﻿using IdentityModel;
+using IdentityModel.Client;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SharedEntities.Models;
@@ -36,13 +37,13 @@ namespace TransactionService.Apis
 
         private async Task Authorize()
         {
-            var discoveryDocoment = await _cardApiClient.GetDiscoveryDocumentAsync("https://localhost:10001");
+            var discoveryDocoment = await _cardApiClient.GetDiscoveryDocumentAsync("https://localhost:10001/");
             var tokenResponse = await _cardApiClient.RequestClientCredentialsTokenAsync(new ClientCredentialsTokenRequest
             {
                 Address = discoveryDocoment.TokenEndpoint,
                 ClientId = "client_card",
-                ClientSecret = "client_secret",
-                Scope = "CardAPI"
+                ClientSecret = "client_secret".ToSha256(),
+                Scope = "cardAPI"
             });
             _cardApiClient.SetBearerToken(tokenResponse.AccessToken);
         }

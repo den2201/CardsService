@@ -49,7 +49,7 @@ namespace CardService
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, config =>
                 {
                     config.Authority = "https://localhost:10001";
-                    config.Audience = "CardAPI";
+                    config.Audience = "cardAPI";
                 });                ;
             services.AddMvc();
             services.Configure<AppSettings>(appSettingsSection);
@@ -88,12 +88,13 @@ namespace CardService
             //  services.AddHostedService<DbCardsValidationService>();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ICardRepository cardRepository, AppDbContext context)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            context.Database.EnsureCreated();
 
             app.Use(async (context, func) =>
             {
@@ -110,7 +111,7 @@ namespace CardService
                 }
             });
 
-            app.UseCors("AnyOrigin");
+           
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
